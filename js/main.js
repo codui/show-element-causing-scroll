@@ -1,71 +1,50 @@
 'use strict';
+import {
+    getDragDrop,
+    preparingWrapperForDragDrop
+} from './drag_drop.js';
+import {insertClassAndRulesToStyleTag} from './insert_to_style_tag.js';
 
 
 function showWhichElementCausesHorizontalScroll() {
 
-    // We create an array from the object containing page elements.
+    // Create an array from the object containing page elements
     let listTags = Array.from(document.body.children);
-    // Remove the script tag from the array.
+    // Remove the script tag from the array
     listTags.splice(-1, 1);
-    // Counter of elements to which the script has assigned a colored border.
-    let countOfPaintBorder = 0;
-    // console.log(listTags, listTags[0].children, listTags.length);
+    let cssClassName = "element-with-border";
+    let btnControlBorder = null;
 
-
-
-    function insertCssClassAndPropInUserStyleSheet( cssClassName = 'some-css-class', cssPropKeyValue = "color: red;" ) {
-        let cssClassAndPropderty = `.${cssClassName} { 
-            ${cssPropKeyValue}
-        }`;
-        // Get the site's style sheet.
-        let cssSheet = null;
-        // Number of CSS style sheet rules.
-        let lengthCssSheet = 0;
-        try {
-            // Get the site's style sheet.
-            cssSheet = document.styleSheets[0];
-            // Number of CSS style sheet rules.
-            lengthCssSheet = cssSheet.cssRules.length;
-        } catch (err) {
-            // alert('The index.html does not contain tag <link rel="stylesheet" href="name-file.css">');
-            console.log(err);
-        }
-        // Insert the created class at the end of the style sheet.
-        cssSheet.insertRule(cssClassAndPropderty, lengthCssSheet);
-        // console.log('cssSheet.cssRules ', cssSheet.cssRules);
-    }
-
-
-    let cssClassName = "scroll-element-border";
-    insertCssClassAndPropInUserStyleSheet(cssClassName, "border: 1px solid red;");
+    // Insert style for element with border
+    insertClassAndRulesToStyleTag(cssClassName, "border: 1px solid red;");
 
 
     function makeButton() {
         let button = document.createElement('button');
-        let btnCssClass = "btn-controller";
-        let btnCssProp = `
-            position: absolute;
-            left: 2%;
-            bottom: 10%;
-            min-width: 200px;
-            max-width: 280px;
-            z-index: 5;
+
+        let cssClassBtn = "btn-controller";
+        let cssRulesBtn = `min-width: 100px;
+            max-width: 130px;
+            z-index: 9999;
             color: black;
             border: 1px solid blue;
             border-radius: 14px;
-            padding: 1rem;
+            padding: 0.5rem;
             outline: none;
             font-size: 1.2rem;
             font-weight: bold;
-            background: blueviolet;
-        `;
-        button.innerHTML = "Toggle border of all html elements";
-        button.className = btnCssClass;
-        insertCssClassAndPropInUserStyleSheet(btnCssClass, btnCssProp);
-        document.body.append(button);
+            cursor: pointer;
+            background: rgba(138, 43, 226, 0.3); 
+            transition: border 0.3s, background 0.3s, color 0.3s, transform 0.3s ease;`;
+        button.innerHTML = `Toggle border all elements`;
+        button.className = cssClassBtn;
+        insertClassAndRulesToStyleTag(cssClassBtn, cssRulesBtn);
         return button;
     }
 
+    btnControlBorder = makeButton();
+    
+    getDragDrop(btnControlBorder);
 
     /** 
     * A recursive function that sets a colored border to page elements.
@@ -83,7 +62,6 @@ function showWhichElementCausesHorizontalScroll() {
             return;
         } else {
             tag.classList.toggle(cssClassName); // tag.style.border = "1px solid red";
-            ++countOfPaintBorder;
             if (tag.children.length !== 0) {
                 setBorderToElement(tag.children);
                 // console.log(tag, tag.children, tag.nextElementSibling);
@@ -96,14 +74,9 @@ function showWhichElementCausesHorizontalScroll() {
     };
 
 
-    let btnControlBorder = makeButton();
-
     btnControlBorder.addEventListener("click", function () {
         setBorderToElement(listTags);
-        console.log(countOfPaintBorder);
-        countOfPaintBorder = 0;
     })
-
     return;
 }
 
