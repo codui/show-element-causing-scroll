@@ -73,7 +73,10 @@ function getDragDrop(button) {
         moveElement(event.pageX, event.pageY, shiftCursorX, shiftCursorY);
 
         function onMouseMove(event) {
-            moveElement(event.pageX, event.pageY, shiftCursorX, shiftCursorY);
+            console.log(event.target);
+            if (event.target !== button) {
+                moveElement(event.pageX, event.pageY, shiftCursorX, shiftCursorY);
+            }
         }
 
         document.addEventListener('mousemove', onMouseMove);
@@ -90,9 +93,3 @@ function getDragDrop(button) {
 
     // return dragElement;
 }
-
-
-export {
-    getDragDrop,
-    preparingWrapperForDragDrop
-};
